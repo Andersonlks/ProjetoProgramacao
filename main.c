@@ -14,6 +14,8 @@ int validaLetra(char c);
 int validaCpf(char x[]);
 int validaRg(char x[]);
 int validaNumero(char x);
+int bissexto(int);
+int dataValida(int, int , int);
 
 struct cliente{
   char nome[100];
@@ -178,6 +180,12 @@ void cadastrarCliente(){
 
         printf("Data de Nascimento (dd/mm/aaaa): ");
         scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
+        
+        while (!dataValida(cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2])){
+            printf("Informe uma Data de Nascimento valida (dd/mm/aaaa): ");
+            scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
+        }
+
         //printf("Emai-l: ");
         //fgets(email, sizeof(email), stdin);
         printf("Renda: R$");
@@ -191,16 +199,20 @@ void cadastrarCliente(){
 }
 void atualizarCadastro(){
     Cliente cl;
-    int resp, op, cpf;
-
+    int resp, op, confirma;
+    char cpf[11];
     
     do{
         system("clear");
         printf("ATUALIZAR CADASTRO DE CLIENTES");
         printf("\n\n----------------------------------");
-        printf("\n\nInforem o CPF do cliente: ");
-        scanf("%d", &cpf);
+        printf("\n\nInforem o CPF do cliente (Apenas Numeros): ");
+        scanf("%s", cpf);
 
+        while (validaCpf(cpf)){
+            printf("Inforem um CPF valido (Apenas Numeros): ");
+            scanf("%s", cpf);
+        }    
         printf("\n\n1 - Nome\n2 - CPF\n3 - RG\n4 - Data de Nascimento\n5 - Renda");
         printf("\n\nEscolha uma das opções de atualização: ");
         scanf("%d", &op);
@@ -218,8 +230,7 @@ void atualizarCadastro(){
             case 2:   
                 printf("CPF (Apenas Numeros): ");
                 scanf("%s", cl.cpf);
-                while (
-                    validaCpf(cl.cpf)){
+                while (validaCpf(cl.cpf)){
                     printf("Inforem um CPF valido (Apenas Numeros): ");
                     scanf("%s", cl.cpf);
                 }
@@ -235,6 +246,11 @@ void atualizarCadastro(){
             case 4:
                 printf("Data de Nascimento (dd/mm/aaaa): ");
                 scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
+                
+                while (!dataValida(cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2])){
+                    printf("Informe uma Data de Nascimento valida (dd/mm/aaaa): ");
+                    scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
+                }
             break;
             case 5: 
                 //printf("Emai-l: ");
@@ -243,15 +259,23 @@ void atualizarCadastro(){
                 scanf("%f", &cl.renda);
             break;
         }
-        printf("\n\nAlteração efetuada com sucesso!");
+        printf("\n\nConfirmação...\n\n1 - confirmar\n0 - Cancelar");
+        printf("\nEscolha uma das opções: ");
+        scanf("%d", &confirma);
+
+        if (confirma == 1){
+            printf("\n\nAlteração efetuada com sucesso!");
+        } else{
+            printf("\n\nOperação cancelada!");
+        }    
         printf("\n\n1 - Atualizar um novo campo\n0 - Sair");
         printf("\nEscolha uma das opções: ");
         scanf("%d", &resp); 
 
     } while(resp!=0);
     
-
 }
+
 void exibirCadastros(){
     Cliente cl;
     system("clear");
@@ -268,15 +292,19 @@ void exibirCadastros(){
     getchar();
 }
 void excluirCadastro(){
-    int cpf, confirma, resp;
-       
+    int confirma, resp;
+    char cpf[11];   
     do{
          system("clear");
         printf("EXCLUIR CADASTROS");
         printf("\n\n-----------------------");
         
         printf("\n\nInforem o CPF do cliente a ser excluido: ");
-        scanf("%d", &cpf);
+        scanf("%s", cpf);
+        while (validaCpf(cpf)){
+            printf("Inforem um CPF valido (Apenas Numeros): ");
+            scanf("%s", cpf);
+        }
 
         printf("\n\nConfirmação...\n\n1 - confirmar\n0 - Cancelar");
         printf("\nEscolha uma das opções: ");
@@ -364,4 +392,38 @@ int validaNumero(char x){
         return 1;
     }
     return 0;
+}
+
+int bissexto(int aa) {
+    if ((aa % 4 == 0) && (aa % 100 != 0)) {
+        return 1;
+    } else if (aa % 400 == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}    
+
+int dataValida(int dd, int mm, int aa) {
+    int maiorDia;
+    if (aa < 0 || mm < 1 || mm > 12)
+        return 0;
+
+    if (mm == 2) {
+        if (bissexto(aa)){
+            maiorDia = 29;
+        } else {
+            maiorDia = 28;
+        }    
+    } else if (mm == 4 || mm == 6 || mm == 9 || mm == 11) {
+        maiorDia = 30;    
+    } else {
+        maiorDia = 31;
+    }                
+    if (dd < 1 || dd > maiorDia){
+        return 0;
+    } else if (mm < 1 || mm > 12){
+        return 0;
+    }
+    return 1;
 }
