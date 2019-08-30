@@ -11,12 +11,14 @@ void excluirCadastro();
 void sobre();
 int verificaNome(char x[]); 
 int validaLetra(char c);
+int validaCpf(char x[]);
+int validaNumero(char x);
 
 struct cliente{
   char nome[100];
   char email;
-  long int cpf;
-  long int rg;
+  char cpf[11];
+  char rg[9];
   int dataNasc[3];
   float renda;
 };
@@ -157,11 +159,17 @@ void cadastrarCliente(){
             
         }
 
-        printf("CPF: ");
-        scanf("%ld", &cl.cpf);
+        printf("CPF (Apenas Numeros): ");
+        scanf("%s", cl.cpf);
+
+        while (validaCpf(cl.cpf)){
+            printf("Inforem um CPF valido (Apenas Numeros): ");
+            scanf("%s", cl.cpf);
+        }
+
         printf("RG: ");
-        scanf("%ld", &cl.rg);
-        printf("data de Nascimento (dd/mm/aaaa): ");
+        scanf("%s", cl.rg);
+        printf("Data de Nascimento (dd/mm/aaaa): ");
         scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
         //printf("Emai-l: ");
         //fgets(email, sizeof(email), stdin);
@@ -194,17 +202,26 @@ void atualizarCadastro(){
             case 1:
                 printf("\nNome: ");
                 fgets(cl.nome, sizeof(cl.nome), stdin);
+                while (!verificaNome(cl.nome)){
+                    printf("\nInforme um nome valido: ");
+                    fgets(cl.nome, sizeof(cl.nome), stdin);
+                    
+                }
             break;
             case 2:   
-                printf("CPF: ");
-                scanf("%ld", &cl.cpf);
+                printf("CPF (Apenas Numeros): ");
+                scanf("%s", cl.cpf);
+                while (validaCpf(cl.cpf)){
+                    printf("Inforem um CPF valido (Apenas Numeros): ");
+                    scanf("%s", cl.cpf);
+                }
             break;
             case 3: 
                 printf("RG: ");
-                scanf("%ld", &cl.rg);
+                scanf("%s", cl.rg);
             break;
             case 4:
-                printf("data de Nascimento (dd/mm/aaaa): ");
+                printf("Data de Nascimento (dd/mm/aaaa): ");
                 scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
             break;
             case 5: 
@@ -230,8 +247,8 @@ void exibirCadastros(){
     printf("\n\n-----------------------");
 
     printf("\n\nNome: %s", cl.nome);
-    printf("\nCPF: %ld", cl.cpf);
-    printf("\nRG: %ld", cl.rg);
+    printf("\nCPF: %s", cl.cpf);
+    printf("\nRG: %s", cl.rg);
     printf("\nData de Nascimento: %02d/%02d/%4d", cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2]);
     printf("\nRenda: R$%.2f", cl.renda);
     printf("\n\nDigite 0 para Sair: "); 
@@ -294,4 +311,30 @@ int validaLetra(char c) {
   else {
     return 0;
   }
+}
+
+int validaCpf(char x[]){
+    int tam;
+    int cont = 0;
+    tam = strlen(x);
+    for (int i = 0; i < tam; i++){
+        cont +=1;
+        if (!validaNumero(x[i])){
+            return 1;
+        }
+    }
+    if (cont != 11){
+        return 1;
+  
+    }
+
+
+    return 0;
+}
+
+int validaNumero(char x){
+    if (x>='0' && x<='9'){
+        return 1;
+    }
+    return 0;
 }
