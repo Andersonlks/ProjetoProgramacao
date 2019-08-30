@@ -324,7 +324,7 @@ void excluirCadastro(){
 void sobre(){
     printf("\nINFORMAÇÕES SOBRE O DESENVOLVEDOR DO SINTEMA");
     printf("\n\n--------------------------------------------------");
-    printf("\n\nSistema desenvolvido por Anderson Lucas da Costa Galdino\nEmai-l: andersoncosta.ob@gmail.com\nTelefone: (84) 9 86078267\n\n");
+    printf("\n\nSistema desenvolvido por Anderson Lucas da Costa Galdino\nEmai-l: andersoncosta.ob@gmail.com\nTelefone: (84) 9 86078267\nConta do Github: https://github.com/Andersonlks\n\n");
 }
 
 int verificaNome(char x[]) { 
