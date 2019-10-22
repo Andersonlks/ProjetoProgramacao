@@ -259,36 +259,75 @@ void atualizarCadastro(){
     
 }
 
-void excluirCadastro(){
-    int confirma, resp;
-    char cpf[11];   
-    do{
-         system("clear");
-        printf("EXCLUIR CADASTROS");
-        printf("\n\n-----------------------");
-        
-        printf("\n\nInforem o CPF do cliente a ser excluido: ");
-        scanf("%s", cpf);
-        while (validaCpf(cpf)){
-            printf("Inforem um CPF valido (Apenas Numeros): ");
-            scanf("%s", cpf);
-        }
-
-        printf("\n\nConfirmação...\n\n1 - confirmar\n0 - Cancelar");
-        printf("\nEscolha uma das opções: ");
-        scanf("%d", &confirma);
-
-        if (confirma == 1){
-            printf("\n\ncliente excluido com sucesso!");
-        } else{
-            printf("\n\nOperação cancelada!");
-        }
-        printf("\n\n1 - Excluir outro cadastro\n0 - Sair");
-        printf("\nEscolha uma das opções: ");
-        scanf("%d", &resp);
-    } while(resp!=0);    
-    
+void exibirCadastros(void) {
+  FILE* fp;
+  Cliente* cliente;
+  fp = fopen("cliente.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = S G control = = = \n");
+  printf("= = Exibe Clientes = = \n");
+  printf("= = = = = = = = = = = \n");
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+    if (cliente->status == '1') {
+      exibeCliente(cliente);
+    }
+  }
+  fclose(fp);
+  free(cliente);
 }
+
+void excluirCadastro(void) {
+    FILE* fp;
+    Cliente* cliente;
+    int achou;
+    char resp;
+    char procurado[15];
+    fp = fopen("cliente.dat", "r+b");
+    if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    printf("\n\n");
+    printf("= = = S G control = = = \n");
+    printf("= = Apagar Cadastro = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o CPF do cliente a ser apagado: ");
+    scanf(" %11[^\n]", procurado);
+    cliente = (Cliente*) malloc(sizeof(Cliente));
+    achou = 0;
+    while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
+        if ((strcmp(cliente->cpf, procurado) == 0) && (cliente->status == '1')) {
+        achou = 1;
+    }
+    }
+    // fclose(fp); CORRIGIR ESTE ERRO AQUI
+    if (achou) {
+        exibeCliente(cliente);
+        getchar();
+        printf("Deseja realmente apagar este cadastro (s/n)? ");
+        scanf("%c", &resp);
+        if (resp == 's' || resp == 'S') {
+            cliente->status = '0';
+            fseek(fp, (-1)*sizeof(Cliente), SEEK_CUR);
+            fwrite(cliente, sizeof(Cliente), 1, fp);
+            printf("\nCadastro excluído com sucesso!!!\n");
+        } else {
+                printf("\nOk, os dados não foram alterados\n");
+        }
+    } else {
+        printf("O Cpf %s não foi encontrado...\n", procurado);
+    }
+    free(cliente);
+    fclose(fp);
+}
+
 void sobre(){
     printf("\nINFORMAÇÕES SOBRE O DESENVOLVEDOR DO SINTEMA");
     printf("\n\n--------------------------------------------------");
@@ -394,30 +433,6 @@ int dataValida(int dd, int mm, int aa) {
         return 0;
     }
     return 1;
-}
-
-
-void exibirCadastros(void) {
-  FILE* fp;
-  Cliente* cliente;
-  fp = fopen("cliente.dat", "rb");
-  if (fp == NULL) {
-    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-    printf("Não é possível continuar o programa...\n");
-    exit(1);
-  }
-  printf("\n\n");
-  printf("= = = S G control = = = \n");
-  printf("= = Exibe Clientes = = \n");
-  printf("= = = = = = = = = = = \n");
-  cliente = (Cliente*) malloc(sizeof(Cliente));
-  while(fread(cliente, sizeof(Cliente), 1, fp)) {
-    if (cliente->status == '1') {
-      exibeCliente(cliente);
-    }
-  }
-  fclose(fp);
-  free(cliente);
 }
 
 void gravaCliente(Cliente* cliente) {
