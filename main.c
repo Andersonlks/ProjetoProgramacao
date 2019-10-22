@@ -74,15 +74,12 @@ int main(void){
                     printf("Opção 5\n\n");
                     buscarCadastro();    
                     break;
-                case 6:
-                    sobre();
-                    break;    
                 }
 
-                menuCliente();
-                printf("\n\nInforme a opção desejada: ");
-                scanf("%d", &resp);
-                getchar();
+                //menuCliente();
+                //printf("\n\nInforme a opção desejada: ");
+                //scanf("%d", &resp);
+                //getchar();
             } while (resp != 0);
             break;
         case 2:
@@ -142,7 +139,6 @@ void menuCliente(){
     printf("\n3 - Exibir cadastros");
     printf("\n4 - Excluir cadastros");
     printf("\n5 - Buscar cadastro");
-    printf("\n6 - Sobre?");
     printf("\n0 - Sair\n\n");
 }
 
