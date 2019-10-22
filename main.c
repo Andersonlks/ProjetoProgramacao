@@ -3,6 +3,15 @@
 #include <string.h>
 //#include "funcoes.h"
 
+typedef struct cliente Cliente;
+struct cliente{
+  char nome[150];
+  char cpf[12];
+  int dataNasc[3];
+  float renda;
+  char status;
+};
+
 void menuPrincipal();
 void menuCliente();
 void cadastrarCliente();
@@ -10,6 +19,10 @@ void atualizarCadastro();
 void exibirCadastros();
 void excluirCadastro();
 void sobre();
+
+void exibeCliente(Cliente* cliente);
+void gravaCliente(Cliente* cliente);
+
 int verificaNome(char x[]); 
 int validaLetra(char c);
 int validaCpf(char x[]);
@@ -18,25 +31,9 @@ int validaNumero(char x);
 int bissexto(int);
 int dataValida(int, int , int);
 
-struct cliente{
-  char nome[100];
-  char email;
-  char cpf[11];
-  char rg[9];
-  int dataNasc[3];
-  float renda;
-};
-
-typedef struct cliente Cliente;
-
-
-
 int main(void){
     int resp;
     int op;
-    char login[5];
-    char senha[5];
-    
     
     do {
         menuPrincipal();
@@ -126,7 +123,7 @@ void menuPrincipal(){
     printf("\n0 - Sair");
 }
 void menuCliente(){
-    system("clear");
+    //system("clear");
     printf("\n######################################");
     printf("\n######################################");
     printf("\n####                              ####");
@@ -143,6 +140,7 @@ void menuCliente(){
     printf("\n0 - Sair\n\n");
 
 }
+/*
 void cadastrarCliente(){
     Cliente cl;
     int resp;
@@ -198,6 +196,7 @@ void cadastrarCliente(){
         getchar();
     } while(resp != 0);
 }
+*/
 void atualizarCadastro(){
     Cliente cl;
     int resp, op, confirma;
@@ -237,12 +236,7 @@ void atualizarCadastro(){
                 }
             break;
             case 3: 
-                printf("RG (Apenas Numerso): ");
-                scanf("%s", cl.rg);
-                while (validaRg(cl.rg)){
-                    printf("Inforem um RG valido (Apenas Numeros): ");
-                    scanf("%s", cl.rg);
-                }
+                printf("Bull");
             break;
             case 4:
                 printf("Data de Nascimento (dd/mm/aaaa): ");
@@ -277,6 +271,7 @@ void atualizarCadastro(){
     
 }
 
+/*
 void exibirCadastros(){
     Cliente cl;
     system("clear");
@@ -285,13 +280,14 @@ void exibirCadastros(){
 
     printf("\n\nNome: %s", cl.nome);
     printf("\nCPF: %s", cl.cpf);
-    printf("\nRG: %s", cl.rg);
     printf("\nData de Nascimento: %02d/%02d/%4d", cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2]);
     printf("\nRenda: R$%.2f", cl.renda);
     printf("\n\nDigite 0 para Sair: "); 
     
     getchar();
 }
+*/
+
 void excluirCadastro(){
     int confirma, resp;
     char cpf[11];   
@@ -428,3 +424,73 @@ int dataValida(int dd, int mm, int aa) {
     }
     return 1;
 }
+
+void cadastrarCliente(void) {
+  Cliente* cliente;
+  printf("\n\n");
+  printf("= = = SGControl = = = \n");
+  printf("= Cadastrar Cliente  = \n");
+  printf("= = = = = = = = = = = \n");
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  printf("Informe o nome do Cliente: ");
+  scanf(" %149[^\n]", cliente->nome);
+  printf("Informe o CPF do cliente: ");
+  scanf(" %11[^\n]", cliente->cpf);
+  printf("Informe a data de nascimento do animal (dd/mm/aaaa): ");
+  scanf(" %d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
+  getchar();
+  printf("Inforem a renda do cliente: R$");
+  scanf(" %f", &cliente->renda);
+  cliente->status = '1';
+  printf("###############################\n");
+  exibeCliente(cliente);
+  printf("###############################\n");
+  gravaCliente(cliente);
+}
+
+void exibirCadastros(void) {
+  FILE* fp;
+  Cliente* cliente;
+  fp = fopen("cliente.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = S G control = = = \n");
+  printf("= = Exibe Clientes = = \n");
+  printf("= = = = = = = = = = = \n");
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+    if (cliente->status == '1') {
+      exibeCliente(cliente);
+    }
+  }
+  fclose(fp);
+  free(cliente);
+}
+
+void gravaCliente(Cliente* cliente) {
+  FILE* fp;
+  fp = fopen("cliente.dat", "ab");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  fwrite(cliente, sizeof(Cliente), 1, fp);
+  fclose(fp);
+}
+
+
+void exibeCliente(Cliente* cliente) {
+  printf("Nome: %s\n", cliente->nome);
+  printf("CPF: %s\n", cliente->cpf);
+  printf("Nascimento: %02d/%02d/%04d\n", cliente->dataNasc[0], cliente->dataNasc[1], cliente->dataNasc[2]);
+  printf("Renda: R$%.2f\n", cliente->renda);
+  printf("\n");
+
+
+}
+
