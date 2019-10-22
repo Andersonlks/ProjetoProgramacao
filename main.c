@@ -76,10 +76,6 @@ int main(void){
                     break;
                 }
 
-                //menuCliente();
-                //printf("\n\nInforme a opção desejada: ");
-                //scanf("%d", &resp);
-                //getchar();
             } while (resp != 0);
             break;
         case 2:
