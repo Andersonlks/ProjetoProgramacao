@@ -140,63 +140,51 @@ void menuCliente(){
     printf("\n0 - Sair\n\n");
 
 }
-/*
-void cadastrarCliente(){
-    Cliente cl;
-    int resp;
-    system("clear");
-   
 
-    do{
-        system("clear");
-        printf("CADASTRO DE CLIENTES...");
-        printf("\n\n-----------------------");
-        
-        printf("\nNome: ");
-        fgets(cl.nome, sizeof(cl.nome), stdin);
-        
-        while (!verificaNome(cl.nome)){
-            printf("\nInforme um nome valido: ");
-            fgets(cl.nome, sizeof(cl.nome), stdin);
-            
-        }
+void cadastrarCliente(void) {
+    Cliente* cliente;
+    printf("\n\n");
+    printf("= = = SGControl = = = \n");
+    printf("= Cadastrar Cliente  = \n");
+    printf("= = = = = = = = = = = \n");
+    cliente = (Cliente*) malloc(sizeof(Cliente));
 
-        printf("CPF (Apenas Numeros): ");
-        scanf("%s", cl.cpf);
+    printf("Informe o nome do Cliente: ");
+    scanf(" %149[^\n]", cliente->nome);
 
-        while (validaCpf(cl.cpf)){
-            printf("Inforem um CPF valido (Apenas Numeros): ");
-            scanf("%s", cl.cpf);
-        }
+    while (!verificaNome(cliente->nome)){
+        printf("\nInforme um nome valido: ");
+        scanf(" %149[^\n]", cliente->nome);
+    }
 
-        printf("RG (Apenas Numeros): ");
-        scanf("%s", cl.rg);
+    printf("Informe o CPF do cliente: ");
+    scanf(" %11[^\n]", cliente->cpf);
 
-        while (validaRg(cl.rg)){
-            printf("Inforem um RG valido (Apenas Numeros): ");
-            scanf("%s", cl.rg);
-        }
+    while (validaCpf(cliente->cpf)){
+        printf("Inforem um CPF valido (Apenas Numeros): ");
+        scanf(" %11[^\n]", cliente->cpf);
+    }
 
-        printf("Data de Nascimento (dd/mm/aaaa): ");
-        scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
-        
-        while (!dataValida(cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2])){
-            printf("Informe uma Data de Nascimento valida (dd/mm/aaaa): ");
-            scanf("%d/%d/%d", &cl.dataNasc[0], &cl.dataNasc[1], &cl.dataNasc[2]);
-        }
+    printf("Informe a data de nascimento do animal (dd/mm/aaaa): ");
+    scanf(" %d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
+    getchar();
 
-        //printf("Emai-l: ");
-        //fgets(email, sizeof(email), stdin);
-        printf("Renda: R$");
-        scanf("%f", &cl.renda);
-
-        printf("\n1 - para continuar cadastrando\n0 - Sair");
-        printf("\nInforme a opção desejada: ");
-        scanf("%d", &resp);
+    while (!dataValida(cliente->dataNasc[0], cliente->dataNasc[1], cliente->dataNasc[2])){
+        printf("Informe uma Data de Nascimento valida (dd/mm/aaaa): ");
+        scanf("%d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
         getchar();
-    } while(resp != 0);
+        
 }
-*/
+
+printf("Inforem a renda do cliente: R$");
+scanf(" %f", &cliente->renda);
+cliente->status = '1';
+printf("###############################\n");
+exibeCliente(cliente);
+printf("###############################\n");
+gravaCliente(cliente);
+}
+
 void atualizarCadastro(){
     Cliente cl;
     int resp, op, confirma;
@@ -270,23 +258,6 @@ void atualizarCadastro(){
     } while(resp!=0);
     
 }
-
-/*
-void exibirCadastros(){
-    Cliente cl;
-    system("clear");
-    printf("LISTA DE CLIENTES");
-    printf("\n\n-----------------------");
-
-    printf("\n\nNome: %s", cl.nome);
-    printf("\nCPF: %s", cl.cpf);
-    printf("\nData de Nascimento: %02d/%02d/%4d", cl.dataNasc[0], cl.dataNasc[1], cl.dataNasc[2]);
-    printf("\nRenda: R$%.2f", cl.renda);
-    printf("\n\nDigite 0 para Sair: "); 
-    
-    getchar();
-}
-*/
 
 void excluirCadastro(){
     int confirma, resp;
@@ -425,28 +396,6 @@ int dataValida(int dd, int mm, int aa) {
     return 1;
 }
 
-void cadastrarCliente(void) {
-  Cliente* cliente;
-  printf("\n\n");
-  printf("= = = SGControl = = = \n");
-  printf("= Cadastrar Cliente  = \n");
-  printf("= = = = = = = = = = = \n");
-  cliente = (Cliente*) malloc(sizeof(Cliente));
-  printf("Informe o nome do Cliente: ");
-  scanf(" %149[^\n]", cliente->nome);
-  printf("Informe o CPF do cliente: ");
-  scanf(" %11[^\n]", cliente->cpf);
-  printf("Informe a data de nascimento do animal (dd/mm/aaaa): ");
-  scanf(" %d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
-  getchar();
-  printf("Inforem a renda do cliente: R$");
-  scanf(" %f", &cliente->renda);
-  cliente->status = '1';
-  printf("###############################\n");
-  exibeCliente(cliente);
-  printf("###############################\n");
-  gravaCliente(cliente);
-}
 
 void exibirCadastros(void) {
   FILE* fp;
