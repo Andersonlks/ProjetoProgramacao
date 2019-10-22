@@ -206,8 +206,12 @@ void atualizarCadastro(void) {
     printf("= = = S G P e t = = = \n");
     printf("= = Editar Cadastro = = \n");
     printf("= = = = = = = = = = = \n");
-    printf("Informe o CPF do cadastro a ser alterado: ");
+    printf("Informe o CPF do cadastro a ser alterado (Apenas Numeros): ");
     scanf(" %11[^\n]", procurado);
+    while (validaCpf(procurado)){
+        printf("Inforem um CPF valido (Apenas Numeros): ");
+        scanf(" %11[^\n]", procurado);
+    }
     cliente = (Cliente*) malloc(sizeof(Cliente));
     achou = 0;
     while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
@@ -303,8 +307,12 @@ void excluirCadastro(void){
     printf("= = = S G control = = = \n");
     printf("= = Apagar Cadastro = = \n");
     printf("= = = = = = = = = = = \n");
-    printf("Informe o CPF do cliente a ser apagado: ");
+    printf("Informe o CPF do cliente a ser apagado (Apenas Numeros): ");
     scanf(" %11[^\n]", procurado);
+    while (validaCpf(procurado)){
+        printf("Inforem um CPF valido (Apenas Numeros): ");
+        scanf(" %11[^\n]", procurado);
+    }
     cliente = (Cliente *)malloc(sizeof(Cliente));
     achou = 0;
     while ((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))){
@@ -350,6 +358,10 @@ void buscarCadastro(void) {
     printf("= = = = = = = = = = = \n");
     printf("Informe o CPF do cadastro a ser buscado: ");
     scanf(" %11[^\n]", procurado);
+    while (validaCpf(procurado)){
+        printf("Inforem um CPF valido (Apenas Numeros): ");
+        scanf(" %11[^\n]", procurado);
+    }
     cliente = (Cliente*) malloc(sizeof(Cliente));
     achou = 0;
     while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
