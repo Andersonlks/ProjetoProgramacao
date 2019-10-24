@@ -2,13 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 //#include "funcoes.h"
-
 typedef struct cliente Cliente;
 struct cliente{
     char nome[150];
     char cpf[12];
     int dataNasc[3];
     float renda;
+    char status;
+};
+
+typedef struct comercio Comercio;
+struct comercio{
+    char codigo[10];
+    char nomeAlimento[60];
+    float preco;
     char status;
 };
 
@@ -19,10 +26,13 @@ void atualizarCadastro();
 void exibirCadastros();
 void excluirCadastro();
 void buscarCadastro();
+void limpaArq();
 void sobre();
 
 void exibeCliente(Cliente *cliente);
 void gravaCliente(Cliente *cliente);
+
+void menuComercio();
 
 int verificaNome(char x[]);
 int validaLetra(char c);
@@ -74,17 +84,18 @@ int main(void){
                     printf("Opção 5\n\n");
                     buscarCadastro();    
                     break;
+                case 999:
+                    printf("Surpresa....");
+                    limpaArq();
+                    break;    
                 }
 
             } while (resp != 0);
             break;
         case 2:
             do{
-                system("clear");
-                printf("\nCOMERCIO");
-                printf("\n\n---------------");
-                printf("\n\nParte em desenvolvimento...");
-                printf("\n\n0 - sair: ");
+                menuComercio();
+                printf("\n\nEscolha uma das opções: ");
                 scanf("%d", &resp);
 
             } while (resp != 0);
@@ -116,7 +127,7 @@ void menuPrincipal(){
     printf("\n######################################");
 
     printf("\n\n1 - Clientes");
-    printf("\n2 - comercio");
+    printf("\n2 - Comercio");
     printf("\n3 - Sobre");
     printf("\n0 - Sair");
 }
@@ -138,8 +149,27 @@ void menuCliente(){
     printf("\n0 - Sair\n\n");
 }
 
-void cadastrarCliente(void)
-{
+void menuComercio(){
+    //system("clear");
+    printf("\n######################################");
+    printf("\n######################################");
+    printf("\n####                              ####");
+    printf("\n####           Comercio           ####");
+    printf("\n####                              ####");
+    printf("\n######################################");
+    printf("\n######################################");
+
+    printf("\n\n1 - Cadastrar compra");
+    printf("\n2 - Atualizar compra");
+    printf("\n3 - Excluir compra");
+    printf("\n4 - Buscar compraa");
+    printf("\n5 - Relatorio geral");
+    printf("\n6 - Relatorio semanal");
+    printf("\n7 - Relatorio mensal");
+    printf("\n0 - Sair\n\n");
+}
+
+void cadastrarCliente(void){
     Cliente *cliente;
     printf("\n\n");
     printf("= = = SGControl = = = \n");
@@ -477,6 +507,7 @@ int dataValida(int dd, int mm, int aa){
     return 1;
 }
 
+
 void gravaCliente(Cliente * cliente){
     FILE *fp;
     fp = fopen("cliente.dat", "ab");
@@ -495,4 +526,52 @@ void exibeCliente(Cliente * cliente){
     printf("Nascimento: %02d/%02d/%04d\n", cliente->dataNasc[0], cliente->dataNasc[1], cliente->dataNasc[2]);
     printf("Renda: R$%.2f\n", cliente->renda);
     printf("\n");
+}
+
+void limpaArq(){
+  FILE* fp1;
+  FILE* fp2;
+  Cliente* cliente;
+
+  fp1 = fopen("cliente.dat", "rb");
+  if (fp1 == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  fp2 = fopen("backup.dat", "wb");
+  if (fp2 == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+
+  while(fread(cliente, sizeof(Cliente), 1, fp1)) {
+    if (cliente->status == '1'){
+      fwrite(cliente, sizeof(Cliente), 1, fp2);
+    }
+  }
+  fclose(fp1);
+  fclose(fp2);
+
+  fp1 = fopen("cliente.dat", "wb");
+  if (fp1 == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  fp2 = fopen("backup.dat", "rb");
+  if (fp2 == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  while(fread(cliente, sizeof(Cliente), 1, fp2)) {
+    fwrite(cliente, sizeof(Cliente), 1, fp1);
+  }
+  fclose(fp1);
+  fclose(fp2);
+  free(cliente);  
 }
