@@ -1,6 +1,4 @@
 #include <string.h>
-#include <stdlib.h>
-#include "funcoes.h"
 
 int validaNumero(char x){
     if (x>='0' && x<='9'){

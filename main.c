@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "funcoes.h"
+#include "funcoes.h"
+
+//gcc -o prog funcoes.o prog.o
 typedef struct cliente Cliente;
 struct cliente{
     char nome[150];
@@ -34,6 +36,7 @@ void gravaCliente(Cliente *cliente);
 
 void menuComercio();
 
+/*
 int verificaNome(char x[]);
 int validaLetra(char c);
 int validaCpf(char x[]);
@@ -41,6 +44,7 @@ int validaRg(char x[]);
 int validaNumero(char x);
 int bissexto(int);
 int dataValida(int, int, int);
+*/
 
 int main(void){
     int resp;
@@ -428,7 +432,7 @@ void sobre(){
     printf("\n\n--------------------------------------------------");
     printf("\n\nSistema desenvolvido por Anderson Lucas da Costa Galdino\nEmai-l: andersoncosta.ob@gmail.com\nTelefone: (84) 9 86078267\nConta do Github: https://github.com/Andersonlks\n\n");
 }
-
+/*
 int verificaNome(char x[]){
     int tam;
     tam = strlen(x) - 1;
@@ -529,7 +533,7 @@ int dataValida(int dd, int mm, int aa){
     }
     return 1;
 }
-
+*/
 
 void gravaCliente(Cliente * cliente){
     FILE *fp;
