@@ -14,7 +14,7 @@ struct cliente{
 typedef struct comercio Comercio;
 struct comercio{
     char codigo[10];
-    char nomeAlimento[60];
+    char nomeProduto[60];
     float preco;
     char status;
 };
@@ -543,11 +543,30 @@ void gravaCliente(Cliente * cliente){
     fclose(fp);
 }
 
+void gravaCompra(Comercio* comercio){
+    FILE *fp;
+    fp = fopen("comercio.dat", "ab");
+    if (fp == NULL){
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    fwrite(comercio, sizeof(Comercio), 1, fp);
+    fclose(fp);
+}
+
 void exibeCliente(Cliente * cliente){
     printf("Nome: %s\n", cliente->nome);
     printf("CPF: %s\n", cliente->cpf);
     printf("Nascimento: %02d/%02d/%04d\n", cliente->dataNasc[0], cliente->dataNasc[1], cliente->dataNasc[2]);
     printf("Renda: R$%.2f\n", cliente->renda);
+    printf("\n");
+}
+
+void exibeCompra(Comercio* comercio){
+    printf("Codigo: %s\n", comercio->codigo);
+    printf("Nome do produto: %s\n", comercio->nomeProduto);
+    printf("Preço: R$%.2f", comercio->preco);
     printf("\n");
 }
 
