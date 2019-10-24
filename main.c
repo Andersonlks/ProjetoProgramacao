@@ -97,7 +97,29 @@ int main(void){
                 menuComercio();
                 printf("\n\nEscolha uma das opções: ");
                 scanf("%d", &resp);
-
+                switch (resp){
+                case 1:
+                    printf("\nOp 1");
+                    break;
+                case 2:
+                    printf("\nOp 2");
+                    break;
+                case 3:
+                    printf("\nOp 3");
+                    break;
+                case 4:
+                    printf("\nOp 4");
+                    break;        
+                case 5:
+                    printf("\nOp 5");
+                    break;
+                case 6:
+                    printf("\nOp 6");
+                    break;
+                case 7:
+                    printf("\nOp 7");
+                    break;
+                }
             } while (resp != 0);
             break;
         case 3:
@@ -148,6 +170,7 @@ void menuCliente(){
     printf("\n5 - Buscar cadastro");
     printf("\n0 - Sair\n\n");
 }
+
 
 void menuComercio(){
     //system("clear");
