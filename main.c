@@ -39,6 +39,7 @@ void cadastrarServico(void);
 void exibirServico(void);
 void buscarServico(void);
 void excluirServico(void);
+void atualizarServico(void); 
 
 void exibeServico(Servico* servico);
 void gravaServico(Servico* servico);
@@ -105,6 +106,7 @@ int main(void){
                     break;
                 case 2:
                     printf("\nOp 2");
+                    atualizarServico(); 
                     break;
                 case 3:
                     printf("\nOp 3");
@@ -637,3 +639,55 @@ void excluirServico(void){
     free(servico);
     fclose(fp);
 }
+
+void atualizarServico(void) {
+    FILE* fp;
+    Servico* servico;
+    int achou;
+    char resp;
+    char procurado[10];
+    fp = fopen("servico.dat", "r+b");
+    if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    printf("\n\n");
+    printf("= = = S G Control = = = \n");
+    printf("= = Editar Serviço  = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o codigo do serviço a ser alterado (Apenas Numeros): ");
+    scanf(" %11[^\n]", procurado);
+    
+    servico = (Servico*) malloc(sizeof(Servico));
+    achou = 0;
+    while((!achou) && (fread(servico, sizeof(Servico), 1, fp))) {
+        if ((strcmp(servico->codigo, procurado) == 0) && (servico->statuServ == '1')) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        exibeServico(servico);
+        printf("\nInforem o codigo do serviço: ");
+        scanf(" %9[^\n]", servico->codigo);
+        printf("\nInforem o nome do serviço: ");
+        scanf(" %59[^\n]", servico->nomeServico);
+        printf("\nInforem o preço do serviço: R$");
+        scanf(" %f", &servico->preco);
+        servico->statuServ = '1';
+        getchar();
+        printf("Deseja realmente editar este serviço (s/n)? ");
+        scanf("%c", &resp);
+        if (resp == 's' || resp == 'S') {
+            fseek(fp, (-1)*sizeof(Servico), SEEK_CUR);
+            fwrite(servico, sizeof(Servico), 1, fp);
+            printf("\nServiço editado com sucesso!!!\n");
+        } else {
+            printf("\nOk, os dados não foram alterados\n");
+        }
+    } else {
+        printf("O codigo %s não foi encontrado...\n", procurado);
+    }
+    free(servico);
+    fclose(fp);
+}    
