@@ -38,18 +38,10 @@ void menuServicos();
 void cadastrarServico(void);
 void exibirServico(void);
 void buscarServico(void);
+void excluirServico(void);
 
 void exibeServico(Servico* servico);
 void gravaServico(Servico* servico);
-/*
-int verificaNome(char x[]);
-int validaLetra(char c);
-int validaCpf(char x[]);
-int validaRg(char x[]);
-int validaNumero(char x);
-int bissexto(int);
-int dataValida(int, int, int);
-*/
 
 int main(void){
     int resp;
@@ -116,6 +108,7 @@ int main(void){
                     break;
                 case 3:
                     printf("\nOp 3");
+                    excluirServico();
                     break;
                 case 4:
                     printf("\nOp 4");
@@ -432,108 +425,6 @@ void sobre(){
     printf("\n\n--------------------------------------------------");
     printf("\n\nSistema desenvolvido por Anderson Lucas da Costa Galdino\nEmai-l: andersoncosta.ob@gmail.com\nTelefone: (84) 9 86078267\nConta do Github: https://github.com/Andersonlks\n\n");
 }
-/*
-int verificaNome(char x[]){
-    int tam;
-    tam = strlen(x) - 1;
-    for (int i = 0; i < tam; i++)
-    {
-        if (!validaLetra(x[i]))
-        {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-int validaLetra(char c){
-    if (c >= 'A' && c <= 'Z'){
-        return 1;
-    }else if (c >= 'a' && c <= 'z'){
-        return 1;
-    }else if (c == ' '){
-        return 1;
-    }else{
-        return 0;
-    }
-}
-
-int validaCpf(char x[]){
-    int tam;
-    int cont = 0;
-    tam = strlen(x);
-    for (int i = 0; i < tam; i++){
-        cont += 1;
-        if (!validaNumero(x[i])){
-            return 1;
-        }
-    }
-    if (cont != 11){
-        return 1;
-    }
-    return 0;
-}
-
-int validaRg(char x[]){
-    int tam;
-    int cont = 0;
-    tam = strlen(x);
-    for (int i = 0; i < tam; i++){
-        cont += 1;
-        if (!validaNumero(x[i]))
-        {
-            return 1;
-        }
-    }
-    if (cont != 9){
-        return 1;
-    }
-    return 0;
-}
-
-int validaNumero(char x){
-    if (x >= '0' && x <= '9')
-    {
-        return 1;
-    }
-    return 0;
-}
-
-int bissexto(int aa){
-    if ((aa % 4 == 0) && (aa % 100 != 0))
-    {
-        return 1;
-    }else if (aa % 400 == 0){
-        return 1;
-    }else{
-        return 0;
-    }
-}
-
-int dataValida(int dd, int mm, int aa){
-    int maiorDia;
-    if (aa < 0 || mm < 1 || mm > 12)
-        return 0;
-
-    if (mm == 2){
-        if (bissexto(aa)){
-            maiorDia = 29;
-        }else{
-            maiorDia = 28;
-        }
-    }else if (mm == 4 || mm == 6 || mm == 9 || mm == 11)  {
-        maiorDia = 30;
-    }else{
-        maiorDia = 31;
-    }
-    if (dd < 1 || dd > maiorDia){
-        return 0;
-    }else if (mm < 1 || mm > 12){
-        return 0;
-    }
-    return 1;
-}
-*/
 
 void gravaCliente(Cliente * cliente){
     FILE *fp;
@@ -695,7 +586,54 @@ void buscarServico(void) {
     if (achou) {
         exibeServico(servico);
     } else {
-        printf("O serviço %s não foi encontrado...\n", procurado);
+        printf("O codigo %s não foi encontrado...\n", procurado);
     }
     free(servico);
+}
+
+void excluirServico(void){
+    FILE* fp;
+    Servico* servico;
+    int achou;
+    char resp;
+    char procurado[10];
+    fp = fopen("servico.dat", "r+b");
+    if (fp == NULL){
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    printf("\n\n");
+    printf("= = = S G control = = = \n");
+    printf("= = Apagar Serviço  = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
+    scanf(" %9[^\n]", procurado);
+    
+    servico = (Servico *)malloc(sizeof(Servico));
+    achou = 0;
+    while ((!achou) && (fread(servico, sizeof(Servico), 1, fp))){
+        if ((strcmp(servico->codigo, procurado) == 0) && (servico->statuServ == '1')){
+            achou = 1;
+        }
+    }
+    // fclose(fp); CORRIGIR ESTE ERRO AQUI
+    if (achou){
+        exibeServico(servico);
+        getchar();
+        printf("Deseja realmente apagar este serviço (s/n)? ");
+        scanf("%c", &resp);
+        if (resp == 's' || resp == 'S'){
+            servico->statuServ = '0';
+            fseek(fp, (-1) * sizeof(Servico), SEEK_CUR);
+            fwrite(servico, sizeof(Servico), 1, fp);
+            printf("\nServiço excluído com sucesso!!!\n");
+        }else{
+            printf("\nOk, os dados não foram alterados\n");
+        }
+    }else{
+        printf("O codigo %s não foi encontrado...\n", procurado);
+    }
+    free(servico);
+    fclose(fp);
 }
