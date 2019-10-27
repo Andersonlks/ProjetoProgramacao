@@ -15,7 +15,7 @@ int validaLetra(char c) {
   else if (c>='a' && c<='z') { 
     return 1;
   }
-  else if (c == ' ') {
+  else if (c == ' ' || c == '~' || c == '^') {
     return 1;
   }
   else {
@@ -28,10 +28,10 @@ int verificaNome(char x[]) {
   tam = strlen(x)-1;
   for (int i = 0; i < tam; i++) {
     if (!validaLetra(x[i])) {
-      return 0;
+      return 1;
     }
   }
-  return 1;
+  return 0;
 }
 
 int validaCpf(char x[]){

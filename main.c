@@ -267,7 +267,7 @@ void cadastrarCliente(void){
     printf("Informe o nome do Cliente: ");
     scanf(" %149[^\n]", cliente->nome);
 
-    while (!verificaNome(cliente->nome)){
+    while (verificaNome(cliente->nome)){
         printf("\nInforme um nome valido: ");
         scanf(" %149[^\n]", cliente->nome);
     }
@@ -333,7 +333,7 @@ void atualizarCadastro(void) {
         printf("Informe o nome do Cliente: ");
         scanf(" %149[^\n]", cliente->nome);
 
-        while (!verificaNome(cliente->nome)){
+        while (verificaNome(cliente->nome)){
             printf("\nInforme um nome valido: ");
             scanf(" %149[^\n]", cliente->nome);
         }
@@ -571,8 +571,17 @@ void cadastrarServico(void){
 
     printf("\nInforem o codigo do serviço: ");
     scanf(" %9[^\n]", servico->codigo);
+    while (validaRg(servico->codigo)){
+        printf("Informe o codigo do serviço valido (Apenas Numeros): ");
+        scanf(" %9[^\n]", servico->codigo);
+    }
     printf("\nInforem o nome do serviço: ");
     scanf(" %59[^\n]", servico->nomeServico);
+    while (verificaNome(servico->nomeServico)){
+        printf("\nInforem o nome do serviço: ");
+        scanf(" %59[^\n]", servico->nomeServico);
+    }
+    
     printf("\nInforem o preço do serviço: R$");
     scanf(" %f", &servico->preco);
     servico->statuServ = '1';
@@ -641,7 +650,10 @@ void buscarServico(void) {
     printf("= = = = = = = = = = = \n");
     printf("Informe o codigo do serviço a ser buscado: ");
     scanf(" %9[^\n]", procurado);
-
+    while (validaRg(procurado)){
+        printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
+        scanf(" %9[^\n]", procurado);
+    }
     servico = (Servico*) malloc(sizeof(Servico));
     achou = 0;
     while((!achou) && (fread(servico, sizeof(Servico), 1, fp))) {
@@ -676,6 +688,10 @@ void excluirServico(void){
     printf("= = = = = = = = = = = \n");
     printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
     scanf(" %9[^\n]", procurado);
+    while (validaRg(procurado)){
+        printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
+        scanf(" %9[^\n]", procurado);
+    }
     
     servico = (Servico *)malloc(sizeof(Servico));
     achou = 0;
@@ -733,10 +749,20 @@ void atualizarServico(void) {
     }
     if (achou) {
         exibeServico(servico);
-        printf("\nInforem o codigo do serviço: ");
+        printf("\nInforem o codigo do serviço (Nove Digitos): ");
         scanf(" %9[^\n]", servico->codigo);
+        while (validaRg(servico->codigo)){
+            printf("\nInforem o codigo do serviço (Nove Digitos): ");
+            scanf(" %9[^\n]", servico->codigo);
+        }
+        
         printf("\nInforem o nome do serviço: ");
         scanf(" %59[^\n]", servico->nomeServico);
+        while (verificaNome(servico->nomeServico)){
+            printf("\nInforem o nome do serviço valido: ");
+            scanf(" %59[^\n]", servico->nomeServico);
+        }
+        
         printf("\nInforem o preço do serviço: R$");
         scanf(" %f", &servico->preco);
         servico->statuServ = '1';
@@ -777,20 +803,33 @@ void selecionaCorte(void){
 
     printf("\nInforme o Nome do serviço: ");
     scanf(" %59[^\n]", registro->nomeReg);
+    while (verificaNome(registro->nomeReg)){
+        printf("\nInforme o Nome do serviço valido: ");
+        scanf(" %59[^\n]", registro->nomeReg);
+    }
 
     printf("\nInforme o Preço: R$");
     scanf("%f", &registro->precoServ);
 
     printf("\nInforme o Nome do cliente: ");
     scanf(" %149[^\n]", registro->nomeCli);
-
-    printf("\nInforme o cpf do cliente: ");
+    while (verificaNome(registro->nomeCli)){   
+        printf("\nInforme o Nome do Cliente valido: ");
+        scanf(" %59[^\n]", registro->nomeCli);
+    }
+    printf("\nInforme o cpf do cliente (Apenas Numerso): ");
     scanf(" %11[^\n]", registro->cpfCli);
-
+    while (validaCpf(registro->cpfCli)){
+        printf("\nInforme o cpf do cliente (Apenas Numeros): ");
+        scanf(" %11[^\n]", registro->cpfCli);
+    }
     printf("\n1 - Pagar\n2 - Fiado");
     printf("\nDeseja pagar avista ou deixar fiado? ");
     scanf("%d", &x);
-
+    while (validaNumero(x)){
+            printf("\nDeseja pagar avista ou deixar fiado? (INFOREM UMAS DAS OPÇOES A CIMA) ");
+            scanf("%d", &x);
+        }
     if (x == 1){
         registro->statusReg = '1';
     } else {
@@ -824,7 +863,10 @@ void atualizarCorte(void){
     printf("= = = = = = = = = = = \n");
     printf("Informe o CPF que consta no registro (Apenas Numeros): ");
     scanf(" %11[^\n]", procurado);
-    
+    while (validaCpf(procurado)){
+        printf("Informe o CPF que consta no registro (Apenas Números): ");
+        scanf(" %11[^\n]", procurado);
+    }
     registro = (Registro*) malloc(sizeof(Registro));
     achou = 0;
     while((!achou) && (fread(registro, sizeof(Registro), 1, fp))) {
@@ -837,20 +879,37 @@ void atualizarCorte(void){
         
         printf("\nInforme o Nome do serviço: ");
         scanf(" %59[^\n]", registro->nomeReg);
-
+        while (verificaNome(registro->nomeReg)){
+            printf("\nInforme o Nome do serviço valido: ");
+            scanf(" %59[^\n]", registro->nomeReg);
+        }
+        
         printf("\nInforme o Preço: R$");
         scanf("%f", &registro->precoServ);
 
         printf("\nInforme o Nome do cliente: ");
         scanf(" %149[^\n]", registro->nomeCli);
+        while (verificaNome(registro->nomeCli)){   
+            printf("\nInforme o Nome do Cliente valido: ");
+            scanf(" %59[^\n]", registro->nomeCli);
+        }
+        
 
-        printf("\nInforme o cpf do cliente: ");
+        printf("\nInforme o cpf do cliente (Apenas Númerso): ");
         scanf(" %11[^\n]", registro->cpfCli);
-
+        while (validaCpf(registro->cpfCli)){
+            printf("\nInforme o cpf do cliente (Apenas Números): ");
+            scanf(" %11[^\n]", registro->cpfCli);
+        }
+        
         printf("\n1 - Pagar\n2 - Fiado");
         printf("\nDeseja pagar avista ou deixar fiado? ");
         scanf("%d", &x);
-
+        while (validaNumero(x)){
+            printf("\nDeseja pagar avista ou deixar fiado? (INFOREM UMAS DAS OPÇOES A CIMA) ");
+            scanf("%d", &x);
+        }
+        
         if (x == 1){
             registro->statusReg = '1';
         } else {
@@ -914,9 +973,13 @@ void buscarRegistro(void){
     printf("= = = S G Control  = = = \n");
     printf("= = Buscar Registro  = = \n");
     printf("= = = = = = = = = = = \n");
-    printf("Informe o CPF do cliente: ");
+    printf("Informe o CPF do cliente (Apenas Números): ");
     scanf(" %11[^\n]", procurado);
-
+    while (validaCpf(procurado)){
+        printf("Informe o CPF do cliente (Apenas Números): ");
+        scanf(" %11[^\n]", procurado);
+    }
+    
     registro = (Registro*) malloc(sizeof(Registro));
     achou = 0;
     while((fread(registro, sizeof(Registro), 1, fp))) {
@@ -959,6 +1022,3 @@ void gravaRegistro(Registro* registro){
     fwrite(registro, sizeof(Registro), 1, fp);
     fclose(fp);
 }
-
-
-
