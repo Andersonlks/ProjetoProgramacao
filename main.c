@@ -166,7 +166,7 @@ int main(void){
                     break;
                 case 2:
                     printf("\nOp 2");
-                     
+                    atualizarCorte(); 
                     break;
                 case 3:
                     printf("\nOp 3");
@@ -174,12 +174,9 @@ int main(void){
                     break;
                 case 4:
                     printf("\nOp 4");
-                    
+                    buscarRegistro();
                     break;        
-                case 5:
-                    printf("\nOp 5");
-                    
-                    break;
+
                 }
             }while (resp != 0);
             break;    
@@ -255,8 +252,7 @@ void menuBarbearia(){
     printf("\n\n1 - Selecionar Corte");
     printf("\n2 - Atualizar Corte");
     printf("\n3 - Exibir Registro ");
-    printf("\n4 - Excluir Registro");
-    printf("\n5 - Buscar Registro");
+    printf("\n4 - Buscar Registro");
     printf("\n0 - Sair\n\n");
 }
 
@@ -771,7 +767,10 @@ void selecionaCorte(void){
         printf("Não é possível continuar o programa...\n");
         exit(1);
     }
-
+    printf("\n\n");
+    printf("= = =   S G Control   = = = \n");
+    printf("= = Selecionar Serviço  = = \n");
+    printf("= = = = = = = = = = = = = = \n");
     registro = (Registro*) malloc(sizeof(Registro));   
 
     exibirServico();
@@ -808,8 +807,74 @@ void selecionaCorte(void){
 }
 
 void atualizarCorte(void){
+    FILE* fp;
+    Registro* registro;
+    int achou, x;
+    char resp;
+    char procurado[12];
+    fp = fopen("registro.dat", "r+b");
+    if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    printf("\n\n");
+    printf("= = =  S G Control  = = = \n");
+    printf("= = Editar Regisstro  = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o CPF que consta no registro (Apenas Numeros): ");
+    scanf(" %11[^\n]", procurado);
+    
+    registro = (Registro*) malloc(sizeof(Registro));
+    achou = 0;
+    while((!achou) && (fread(registro, sizeof(Registro), 1, fp))) {
+        if ((strcmp(registro->cpfCli, procurado) == 0)) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        exibeRegistro(registro);
+        
+        printf("\nInforme o Nome do serviço: ");
+        scanf(" %59[^\n]", registro->nomeReg);
 
+        printf("\nInforme o Preço: R$");
+        scanf("%f", &registro->precoServ);
+
+        printf("\nInforme o Nome do cliente: ");
+        scanf(" %149[^\n]", registro->nomeCli);
+
+        printf("\nInforme o cpf do cliente: ");
+        scanf(" %11[^\n]", registro->cpfCli);
+
+        printf("\n1 - Pagar\n2 - Fiado");
+        printf("\nDeseja pagar avista ou deixar fiado? ");
+        scanf("%d", &x);
+
+        if (x == 1){
+            registro->statusReg = '1';
+        } else {
+            registro->statusReg = '0';
+        }
+
+        registro->statusAtiv = '1';
+        getchar();
+        printf("Deseja realmente editar este registro (s/n)? ");
+        scanf("%c", &resp);
+        if (resp == 's' || resp == 'S') {
+            fseek(fp, (-1)*sizeof(Registro), SEEK_CUR);
+            fwrite(registro, sizeof(Registro), 1, fp);
+            printf("\nregistro editado com sucesso!!!\n");
+        } else {
+            printf("\nOk, os dados não foram alterados\n");
+        }
+    } else {
+        printf("O cpf %s não foi encontrado...\n", procurado);
+    }
+    free(registro);
+    fclose(fp);
 }
+
 
 void listarRegistro(void){
     FILE* fp;
@@ -835,7 +900,36 @@ void listarRegistro(void){
 }
 
 void buscarRegistro(void){
+    FILE* fp;
+    Registro* registro;
+    int achou;
+    char procurado[12];
+    fp = fopen("registro.dat", "rb");
+    if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    printf("\n\n");
+    printf("= = = S G Control  = = = \n");
+    printf("= = Buscar Registro  = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o CPF do cliente: ");
+    scanf(" %11[^\n]", procurado);
 
+    registro = (Registro*) malloc(sizeof(Registro));
+    achou = 0;
+    while((fread(registro, sizeof(Registro), 1, fp))) {
+        if ((strcmp(registro->cpfCli, procurado) == 0)) {
+            exibeRegistro(registro);
+            achou = 1;
+        }
+    }
+    if (achou == 0){
+        printf("O cpf %s não foi encontrado nos registros...", procurado);
+    }
+    fclose(fp);
+    free(registro);
 }
 
 void excluiRegistro(void){
@@ -852,6 +946,7 @@ void exibeRegistro(Registro* registro){
     } else{
         printf("\nEstatus do Serviço: Fiado");
     }
+    printf("\n");
 }
 void gravaRegistro(Registro* registro){
     FILE *fp;
