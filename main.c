@@ -15,7 +15,7 @@ struct cliente{
 
 typedef struct servico Servico;
 struct servico{
-    char codigo[10];
+    int codigo;
     char nomeServico[60];
     float preco;
     char statuServ;
@@ -251,8 +251,8 @@ void menuBarbearia(){
 
     printf("\n\n1 - Selecionar Corte");
     printf("\n2 - Atualizar Corte");
-    printf("\n3 - Exibir Registro ");
-    printf("\n4 - Buscar Registro");
+    printf("\n3 - Relatorios ");
+    printf("\n4 - Buscar no relatorio");
     printf("\n0 - Sair\n\n");
 }
 
@@ -280,7 +280,7 @@ void cadastrarCliente(void){
         scanf(" %11[^\n]", cliente->cpf);
     }
 
-    printf("Informe a data de nascimento do animal (dd/mm/aaaa): ");
+    printf("Informe a data de nascimento do cliente (dd/mm/aaaa): ");
     scanf(" %d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
     getchar();
 
@@ -346,7 +346,7 @@ void atualizarCadastro(void) {
             scanf(" %11[^\n]", cliente->cpf);
         }
 
-        printf("Informe a data de nascimento do animal (dd/mm/aaaa): ");
+        printf("Informe a data de nascimento do cliente(dd/mm/aaaa): ");
         scanf(" %d/%d/%d", &cliente->dataNasc[0], &cliente->dataNasc[1], &cliente->dataNasc[2]);
         getchar();
 
@@ -570,11 +570,8 @@ void cadastrarServico(void){
     servico = (Servico *)malloc(sizeof(Servico));
 
     printf("\nInforem o codigo do serviço: ");
-    scanf(" %9[^\n]", servico->codigo);
-    while (validaRg(servico->codigo)){
-        printf("Informe o codigo do serviço valido (Apenas Numeros): ");
-        scanf(" %9[^\n]", servico->codigo);
-    }
+    scanf(" %d", &servico->codigo);
+
     printf("\nInforem o nome do serviço: ");
     scanf(" %59[^\n]", servico->nomeServico);
     while (verificaNome(servico->nomeServico)){
@@ -592,7 +589,7 @@ void cadastrarServico(void){
 }
 
 void exibeServico(Servico* servico){
-    printf("\nCodigo: %s\n", servico->codigo);
+    printf("\nCodigo: %d\n", servico->codigo);
     printf("Nome do produto: %s\n", servico->nomeServico);
     printf("Preço: R$%.2f", servico->preco);
     printf("\n");
@@ -637,7 +634,7 @@ void buscarServico(void) {
     FILE* fp;
     Servico* servico;
     int achou;
-    char procurado[10];
+    int procurado;
     fp = fopen("servico.dat", "rb");
     if (fp == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -649,15 +646,12 @@ void buscarServico(void) {
     printf("= = Buscar Serviço  = = \n");
     printf("= = = = = = = = = = = \n");
     printf("Informe o codigo do serviço a ser buscado: ");
-    scanf(" %9[^\n]", procurado);
-    while (validaRg(procurado)){
-        printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
-        scanf(" %9[^\n]", procurado);
-    }
+    scanf(" %d", &procurado);
+    
     servico = (Servico*) malloc(sizeof(Servico));
     achou = 0;
     while((!achou) && (fread(servico, sizeof(Servico), 1, fp))) {
-        if ((strcmp(servico->codigo, procurado) == 0) && (servico->statuServ == '1')) {
+        if ((servico->codigo == procurado) && (servico->statuServ == '1')) {
             achou = 1;
         }
     }
@@ -665,7 +659,7 @@ void buscarServico(void) {
     if (achou) {
         exibeServico(servico);
     } else {
-        printf("O codigo %s não foi encontrado...\n", procurado);
+        printf("O codigo %d não foi encontrado...\n", procurado);
     }
     free(servico);
 }
@@ -675,7 +669,7 @@ void excluirServico(void){
     Servico* servico;
     int achou;
     char resp;
-    char procurado[10];
+    int procurado;
     fp = fopen("servico.dat", "r+b");
     if (fp == NULL){
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -687,16 +681,12 @@ void excluirServico(void){
     printf("= = Apagar Serviço  = = \n");
     printf("= = = = = = = = = = = \n");
     printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
-    scanf(" %9[^\n]", procurado);
-    while (validaRg(procurado)){
-        printf("Informe o codigo do serviço a ser apagado (Apenas Numeros): ");
-        scanf(" %9[^\n]", procurado);
-    }
+    scanf(" %d", &procurado);
     
     servico = (Servico *)malloc(sizeof(Servico));
     achou = 0;
     while ((!achou) && (fread(servico, sizeof(Servico), 1, fp))){
-        if ((strcmp(servico->codigo, procurado) == 0) && (servico->statuServ == '1')){
+        if ((servico->codigo == procurado) && (servico->statuServ == '1')){
             achou = 1;
         }
     }
@@ -715,7 +705,7 @@ void excluirServico(void){
             printf("\nOk, os dados não foram alterados\n");
         }
     }else{
-        printf("O codigo %s não foi encontrado...\n", procurado);
+        printf("O codigo %d não foi encontrado...\n", procurado);
     }
     free(servico);
     fclose(fp);
@@ -726,7 +716,7 @@ void atualizarServico(void) {
     Servico* servico;
     int achou;
     char resp;
-    char procurado[10];
+    int procurado;
     fp = fopen("servico.dat", "r+b");
     if (fp == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -738,24 +728,20 @@ void atualizarServico(void) {
     printf("= = Editar Serviço  = = \n");
     printf("= = = = = = = = = = = \n");
     printf("Informe o codigo do serviço a ser alterado (Apenas Numeros): ");
-    scanf(" %11[^\n]", procurado);
+    scanf(" %d", &procurado);
     
     servico = (Servico*) malloc(sizeof(Servico));
     achou = 0;
     while((!achou) && (fread(servico, sizeof(Servico), 1, fp))) {
-        if ((strcmp(servico->codigo, procurado) == 0) && (servico->statuServ == '1')) {
+        if ((servico->codigo == procurado) && (servico->statuServ == '1')) {
             achou = 1;
         }
     }
     if (achou) {
         exibeServico(servico);
         printf("\nInforem o codigo do serviço (Nove Digitos): ");
-        scanf(" %9[^\n]", servico->codigo);
-        while (validaRg(servico->codigo)){
-            printf("\nInforem o codigo do serviço (Nove Digitos): ");
-            scanf(" %9[^\n]", servico->codigo);
-        }
-        
+        scanf(" %d", &servico->codigo);
+
         printf("\nInforem o nome do serviço: ");
         scanf(" %59[^\n]", servico->nomeServico);
         while (verificaNome(servico->nomeServico)){
@@ -777,7 +763,7 @@ void atualizarServico(void) {
             printf("\nOk, os dados não foram alterados\n");
         }
     } else {
-        printf("O codigo %s não foi encontrado...\n", procurado);
+        printf("O codigo %d não foi encontrado...\n", procurado);
     }
     free(servico);
     fclose(fp);
