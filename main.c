@@ -23,6 +23,7 @@ struct servico{
 
 typedef struct registro  Registro;
 struct registro{
+    int codigoSev;
     char nomeReg[60];
     char nomeCli[150];
     char cpfCli[12];
@@ -84,12 +85,10 @@ int main(void){
                 getchar();
                 switch (resp){
                 case 1:
-                    printf("Opção 1\n\n");
                     cadastrarCliente();
                     break;
 
                 case 2:
-                    printf("Opção 2\n\n");
                     atualizarCadastro();
                     break;
 
@@ -99,16 +98,13 @@ int main(void){
                     break;
 
                 case 4:
-                    printf("Opção 4\n\n");
                     excluirCadastro();
                     break;
 
                 case 5:
-                    printf("Opção 5\n\n");
                     buscarCadastro();    
                     break;
                 case 999:
-                    printf("Surpresa....");
                     limpaArq();
                     break;    
                 }
@@ -122,23 +118,18 @@ int main(void){
                 scanf("%d", &resp);
                 switch (resp){
                 case 1:
-                    printf("\nOp 1");
                     cadastrarServico();
                     break;
                 case 2:
-                    printf("\nOp 2");
                     atualizarServico(); 
                     break;
                 case 3:
-                    printf("\nOp 3");
                     excluirServico();
                     break;
                 case 4:
-                    printf("\nOp 4");
                     buscarServico();
                     break;        
                 case 5:
-                    printf("\nOp 5");
                     exibirServico();
                     break;
                 }
@@ -161,28 +152,32 @@ int main(void){
                 scanf("%d", &resp);
                 switch (resp){
                 case 1:
-                    printf("\nOp 1");
                     selecionaCorte();
                     break;
                 case 2:
-                    printf("\nOp 2");
                     atualizarCorte(); 
                     break;
                 case 3:
-                    printf("\nOp 3");
                     listarRegistro();
                     break;
                 case 4:
-                    printf("\nOp 4");
                     buscarRegistro();
                     break;        
-
+                case 5:
+                    //
+                    break;
+                case 6:
+                    //
+                    break;
+                case 7:
+                    //
+                    break;
                 }
             }while (resp != 0);
             break;    
         }
     } while (op != 0);
-    printf("\n\nFIM :)\n\n");
+    printf("\n\nFIM :) Obrigado por ter utilizado essa belezura... beijos! \n\n");
     return 0;
 }
 
@@ -251,8 +246,11 @@ void menuBarbearia(){
 
     printf("\n\n1 - Selecionar Corte");
     printf("\n2 - Atualizar Corte");
-    printf("\n3 - Relatorios ");
+    printf("\n3 - Relatorios em arquivo");
     printf("\n4 - Buscar no relatorio");
+    printf("\n5 - Exibir Relatorio direto");
+    printf("\n6 - Exibir Relatorio de fiados");
+    printf("\n7 - Exibir Relatorio ordenado");
     printf("\n0 - Sair\n\n");
 }
 
@@ -770,11 +768,20 @@ void atualizarServico(void) {
 }
 
 void selecionaCorte(void){
-    FILE* fp;
-    Registro* registro;
-    int x;
-    fp = fopen("servico.dat", "rb");
-    if (fp == NULL) {
+    FILE* fp1;
+    FILE* fp2;
+    Registro* registro;  
+    Servico* servico;
+    Cliente* cliente; 
+    int x, achou;
+    fp1 = fopen("servico.dat", "rb");
+    if (fp1 == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+    fp2 = fopen("cliente.dat", "rb");
+    if (fp2 == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
         printf("Não é possível continuar o programa...\n");
         exit(1);
@@ -784,51 +791,65 @@ void selecionaCorte(void){
     printf("= = Selecionar Serviço  = = \n");
     printf("= = = = = = = = = = = = = = \n");
     registro = (Registro*) malloc(sizeof(Registro));   
+    servico = (Servico*) malloc(sizeof(Servico));
+    cliente = (Cliente*) malloc(sizeof(Cliente));
 
     exibirServico();
 
-    printf("\nInforme o Nome do serviço: ");
-    scanf(" %59[^\n]", registro->nomeReg);
-    while (verificaNome(registro->nomeReg)){
-        printf("\nInforme o Nome do serviço valido: ");
-        scanf(" %59[^\n]", registro->nomeReg);
-    }
-
-    printf("\nInforme o Preço: R$");
-    scanf("%f", &registro->precoServ);
-
-    printf("\nInforme o Nome do cliente: ");
-    scanf(" %149[^\n]", registro->nomeCli);
-    while (verificaNome(registro->nomeCli)){   
-        printf("\nInforme o Nome do Cliente valido: ");
-        scanf(" %59[^\n]", registro->nomeCli);
-    }
-    printf("\nInforme o cpf do cliente (Apenas Numerso): ");
-    scanf(" %11[^\n]", registro->cpfCli);
-    while (validaCpf(registro->cpfCli)){
-        printf("\nInforme o cpf do cliente (Apenas Numeros): ");
-        scanf(" %11[^\n]", registro->cpfCli);
-    }
-    printf("\n1 - Pagar\n2 - Fiado");
-    printf("\nDeseja pagar avista ou deixar fiado? ");
-    scanf("%d", &x);
-    while (validaNumero(x)){
-            printf("\nDeseja pagar avista ou deixar fiado? (INFOREM UMAS DAS OPÇOES A CIMA) ");
-            scanf("%d", &x);
+    printf("\nInforme o codigo do serviço: ");
+    scanf(" %d", &registro->codigoSev);
+    achou = 0;
+    while((!achou) && (fread(servico, sizeof(Servico), 1, fp1))) {
+        if ((servico->codigo == registro->codigoSev) && (servico->statuServ == '1')) {
+            achou = 1;
         }
-    if (x == 1){
-        registro->statusReg = '1';
-    } else {
-        registro->statusReg = '0';
     }
-
-    registro->statusAtiv = '1';
-    printf("###############################\n");
-    exibeRegistro(registro);
-    printf("###############################\n");
-    gravaRegistro(registro);
-    fclose(fp);
+    if(achou){
+        strcpy(registro->nomeReg, servico->nomeServico);
+        printf("\nInforme o cpf do cliente (Apenas Numerso): ");
+        scanf(" %11[^\n]", registro->cpfCli);
+        while (validaCpf(registro->cpfCli)){
+            printf("\nInforme o cpf do cliente (Apenas Numeros): ");
+            scanf(" %11[^\n]", registro->cpfCli);
+        }
+        achou = 0;
+        while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp2))) {
+            if ((strcmp(cliente->cpf, registro->cpfCli) == 0) && (cliente->status == '1')) {
+                achou = 1;
+            }
+        }
+        if(achou){
+            strcpy(registro->nomeCli, cliente->nome);
+            registro->precoServ  = servico->preco;
+            printf("\n1 - Pagar\n2 - Fiado");
+            printf("\nDeseja pagar avista ou deixar fiado? ");
+            scanf("%d", &x);
+            while (validaNumero(x)){
+                    printf("\nDeseja pagar avista ou deixar fiado? (INFOREM UMAS DAS OPÇOES A CIMA) ");
+                    scanf("%d", &x);
+                }
+            if (x == 1){
+                registro->statusReg = '1';
+            } else {
+                registro->statusReg = '0';
+            }
+            registro->statusAtiv = '1';
+            printf("###############################\n");
+            exibeRegistro(registro);
+            printf("###############################\n");
+            gravaRegistro(registro);
+               
+        }else{
+            printf("Cliente não encontrado...");
+        }
+    }else{
+        printf("Codigo não encontrado...");
+    }
+    fclose(fp1);
+    fclose(fp2);
     free(registro);
+    free(servico);
+    free(cliente);
 }
 
 void atualizarCorte(void){
