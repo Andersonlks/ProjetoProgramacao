@@ -32,6 +32,19 @@ struct registro{
     char statusAtiv;
 };
 
+typedef struct noRegistro NoRegistro;
+
+struct noRegistro{
+    int codigoSev;
+    char nomeReg[60];
+    char nomeCli[150];
+    char cpfCli[12];
+    float precoServ;
+    char statusReg;
+    char statusAtiv;
+    NoRegistro* prox;
+};
+
 void menuPrincipal();
 void menuCliente();
 void cadastrarCliente();
@@ -66,9 +79,14 @@ void excluiRegistro(void);
 void exibeRegistro(Registro* registro);
 void gravaRegistro(Registro* registro);
 
+NoRegistro* listaFiados();
+NoRegistro* listaInvertidaReg();
+void exibeLista(NoRegistro* lista);
+
 int main(void){
     int resp;
     int op;
+    NoRegistro* lista;
 
     do{
         menuPrincipal();
@@ -164,10 +182,12 @@ int main(void){
                     buscarRegistro();
                     break;        
                 case 5:
-                    //
+                    lista = listaInvertidaReg();
+                    exibeLista(lista);
                     break;
                 case 6:
-                    //
+                    lista = listaFiados();
+                    exibeLista(lista);
                     break;
                 case 7:
                     //
@@ -248,7 +268,7 @@ void menuBarbearia(){
     printf("\n2 - Atualizar Corte");
     printf("\n3 - Relatorios em arquivo");
     printf("\n4 - Buscar no relatorio");
-    printf("\n5 - Exibir Relatorio direto");
+    printf("\n5 - Exibir Relatorio invertido");
     printf("\n6 - Exibir Relatorio de fiados");
     printf("\n7 - Exibir Relatorio ordenado");
     printf("\n0 - Sair\n\n");
@@ -1028,4 +1048,103 @@ void gravaRegistro(Registro* registro){
     }
     fwrite(registro, sizeof(Registro), 1, fp);
     fclose(fp);
+}
+/*
+struct registro{
+    int codigoSev;
+    char nomeReg[60];
+    char nomeCli[150];
+    char cpfCli[12];
+    float precoServ;
+    char statusReg;
+    char statusAtiv;
+    NoRegistro* prox;
+    NoRegistro* listaInvertidaReg();
+    void exibeLista(NoRegistro* lista);
+};*/
+
+NoRegistro* listaInvertidaReg() {
+  FILE* fp;
+  Registro* registro;
+  NoRegistro* noRegistro;
+  NoRegistro* lista;
+
+  lista = NULL;
+  fp = fopen("registro.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  registro = (Registro*) malloc(sizeof(Registro));
+  while(fread(registro, sizeof(Registro), 1, fp)) {
+      noRegistro = (NoRegistro*) malloc(sizeof(NoRegistro));
+      noRegistro->codigoSev = registro->codigoSev;
+      strcpy(noRegistro->nomeCli, registro->nomeCli);
+      strcpy(noRegistro->nomeReg, registro->nomeReg);
+      strcpy(noRegistro->cpfCli, registro->cpfCli);
+      noRegistro->precoServ = registro->precoServ;
+      noRegistro->statusReg = registro->statusReg;
+      noRegistro->prox = lista;
+      lista = noRegistro;
+  }
+  fclose(fp);
+  free(registro);
+  return lista;
+}
+
+NoRegistro* listaFiados() {
+  FILE* fp;
+  Registro* registro;
+  NoRegistro* noRegistro;
+  NoRegistro* lista;
+
+  lista = NULL;
+  fp = fopen("registro.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  registro = (Registro*) malloc(sizeof(Registro));
+  while(fread(registro, sizeof(Registro), 1, fp)) {
+      if (registro->statusReg != '1'){
+        noRegistro = (NoRegistro*) malloc(sizeof(NoRegistro));
+        noRegistro->codigoSev = registro->codigoSev;
+        strcpy(noRegistro->nomeCli, registro->nomeCli);
+        strcpy(noRegistro->nomeReg, registro->nomeReg);
+        strcpy(noRegistro->cpfCli, registro->cpfCli);
+        noRegistro->precoServ = registro->precoServ;
+        noRegistro->statusReg = registro->statusReg;
+        noRegistro->prox = lista;
+        lista = noRegistro;
+      }
+  }
+  fclose(fp);
+  free(registro);
+  return lista;
+}
+
+void exibeLista(NoRegistro* lista) {
+  printf("\n\n");
+  printf("= = = S G Control = = = \n");
+  printf("= = Exibe Registro = = \n");
+  printf("= = = = = = = = = = = \n");
+  while (lista != NULL) {
+    printf("\nCódigo: %d\n", lista->codigoSev);
+    printf("Nome Serviço: %s\n", lista->nomeReg);
+    printf("Nome Cliente: %s\n", lista->nomeCli);
+    printf("Cpf: %s\n", lista->cpfCli);
+    printf("Preço: %.2f\n", lista->precoServ);
+    if(lista->statusReg == '1'){
+        printf("Status: Pago");
+    }else{
+        printf("Status: Fiado");
+    }
+    
+    printf("\n");
+    lista = lista->prox;
+  }
 }
