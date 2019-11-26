@@ -793,7 +793,7 @@ void selecionaCorte(void){
     Registro* registro;  
     Servico* servico;
     Cliente* cliente; 
-    int x, achou;
+    int x, achou, resp;
     fp1 = fopen("servico.dat", "rb");
     if (fp1 == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -861,6 +861,21 @@ void selecionaCorte(void){
                
         }else{
             printf("Cliente não encontrado...");
+            printf("\n1 - Cadastrar\n0 - Avulso  obs: Os clientes avulsos não tem direito a deixar um corte fiado\nDeseja cadastrar ou ser avulso? ");
+            scanf("%d", &resp);
+            if (resp == 1){
+                cadastrarCliente();
+            }else{
+                printf("\nInforem o nome do cliente avulso: ");
+                scanf(" %149[^\n]", registro->nomeCli);
+                registro->precoServ  = servico->preco;
+                registro->statusReg = '1';
+                registro->statusAtiv = '1';
+                printf("###############################\n");
+                exibeRegistro(registro);
+                printf("###############################\n");
+                gravaRegistro(registro);
+            }
         }
     }else{
         printf("Codigo não encontrado...");
@@ -1027,6 +1042,7 @@ void excluiRegistro(void){
 }
 
 void exibeRegistro(Registro* registro){
+    printf("\nCodigo do Serviço: %d", registro->codigoSev);
     printf("\nNome do Servico: %s", registro->nomeReg);
     printf("\nNome do Cliente: %s", registro->nomeCli);
     printf("\nCPF: %s", registro->cpfCli);
