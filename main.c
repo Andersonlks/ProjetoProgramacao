@@ -81,6 +81,7 @@ void gravaRegistro(Registro* registro);
 
 NoRegistro* listaFiados();
 NoRegistro* listaInvertidaReg();
+NoRegistro* listaOrdenadaRegistros();
 void exibeLista(NoRegistro* lista);
 
 int main(void){
@@ -190,7 +191,8 @@ int main(void){
                     exibeLista(lista);
                     break;
                 case 7:
-                    //
+                    lista = listaOrdenadaRegistros();
+                    exibeLista(lista);
                     break;
                 }
             }while (resp != 0);
@@ -1137,6 +1139,54 @@ NoRegistro* listaFiados() {
         noRegistro->prox = lista;
         lista = noRegistro;
       }
+  }
+  fclose(fp);
+  free(registro);
+  return lista;
+}
+
+NoRegistro* listaOrdenadaRegistros(void) {
+  FILE* fp;
+  Registro* registro;
+  NoRegistro* noRegistro;
+  NoRegistro* lista;
+
+  lista = NULL;
+  fp = fopen("registro.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  registro = (Registro*) malloc(sizeof(Registro));
+  while(fread(registro, sizeof(Registro), 1, fp)) {
+    if (registro->statusAtiv == '1') {
+      noRegistro = (NoRegistro*) malloc(sizeof(NoRegistro));
+      noRegistro->codigoSev = registro->codigoSev;
+      strcpy(noRegistro->nomeReg, registro->nomeReg);
+      strcpy(noRegistro->nomeCli, registro->nomeCli);
+      strcpy(noRegistro->cpfCli, registro->cpfCli);
+      noRegistro->precoServ = registro->precoServ;
+      noRegistro->statusReg = registro->statusReg;
+
+      if (lista == NULL) {
+        lista = noRegistro;
+        noRegistro->prox = NULL;
+      } else if (noRegistro->codigoSev < lista->codigoSev) {
+        noRegistro->prox = lista;
+        lista = noRegistro;
+      } else {
+        NoRegistro* anter = lista;
+        NoRegistro* atual = lista->prox;
+        while ((atual != NULL) && (atual->codigoSev < noRegistro->codigoSev)){
+          anter = atual;
+          atual = atual->prox;
+        }
+        anter->prox = noRegistro;
+        noRegistro->prox = atual;
+      }
+    }
   }
   fclose(fp);
   free(registro);
