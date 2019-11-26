@@ -1,8 +1,10 @@
-# ProjetoProgramacao
+# ProjetoProgramacão 
 
+Este projeto foi desenvolvido ao decorrer da diciplina de Programação 2019.2 com o intuito de adquirir conhecimento e aperfeicoar as praticas de programação com uma linguagem que trabalha em um nivel mais baixo.
 
-Todas as funções estão juntas do main. 
+Desenvolvedor: Anderson Lucas da Costa Galdino
+Contatos: 
+          E-mail: andersoncosta.ob@gmail.com 
+          Celular: (84) 9 8607-8267
 
-A validação do CPF valida apenas pelo atamanho, que tem que ser igual a 11 e verificando se são apenas numeros. O mesmo esta valendo para o RG
-
-Validação de data OK
+O projeto continua em aberto para quem quiser baixar e melhoralo visando deixalo cada vez mas otimizado e fácil de se trabalhar.
